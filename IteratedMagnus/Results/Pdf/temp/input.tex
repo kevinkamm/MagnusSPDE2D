@@ -1,0 +1,70 @@
+\section{2D Magnus}
+\begin{align*}
+\left\{
+\begin{aligned}[c]\arraycolsep=0pt
+&
+\begin{aligned}[t]\arraycolsep=0pt
+&\biggl(
+-\partial_t u_t(x,v) 
++ h(x,v) u_t(x,v)
++ f^x(x,v) \partial_x u_t(x,v)
++ f^v(x,v) \partial_v u_t(x,v)
+\\&\quad
++ \frac{1}{2} g^{xx}(x,v) \partial_{xx} u_t(x,v)
++ g^{xv}(x,v) \partial_{xv} u_t(x,v)
++ \frac{1}{2} g^{vv}(x,v) \partial_{vv} u_t(x,v)
+\biggr) dt
+\\&\quad
++ \left(\sigma^{x}(x,v) \partial_{x} u_t(x,v) 
++ \sigma^{v}(x,v) \partial_{v} u_t(x,v)\right) dW_t
+= 0
+\end{aligned}\\&
+u_0(x,v)=\phi(x,v)
+\end{aligned}
+\right.
+\end{align*}
+\subsection{Model Coefficient Functions}
+	\input{ModelCoeff/modelCoeff.tex}
+	\modelCoeff
+
+
+\subsection{Numerical Parameters}
+	\input{NumericParam/numericalParam.tex}
+	\timeParam
+
+
+	\positionParam
+
+
+	\velocityParam
+
+
+\subsection{Computational Times}
+	\input{CompTimes/compTimes.tex}
+	\compTimes
+
+
+\subsection{Errors}
+\subsubsection{Error regions}
+	\input{Errors/regions.tex}
+	\errorRegion
+
+
+\subsubsection{Abs Errors}
+	\input{AbsErrors/absErrors.tex}
+	\absErrorsEulerRef
+
+
+\subsubsection{Error Distributions}
+	\input{ErrorDis/errorDis.tex}
+	\errDisEulerRef
+
+
+\subsection{Plots of Mean Absolute Errors}
+\subsection{Reference method: Euler Ref}
+	\input{absErrorEulerRefVideo/video.tex}
+\subsection{Plots of CDFs}
+\subsubsection{Euler Ref as reference}
+	\input{CDF/figure.tex}
+\subsection{Sparsity Patterns}
+	\input{SparsityPatterns/figure.tex}

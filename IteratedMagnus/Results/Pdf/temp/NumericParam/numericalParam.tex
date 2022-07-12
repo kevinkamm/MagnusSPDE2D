@@ -1,0 +1,29 @@
+\newcommand{\tUpper}{0.1}
+\newcommand{\dtEulerRef}{0.0001}
+\newcommand{\dtEuler}{0.001}
+\newcommand{\dtMagnus}{0.025}
+\newcommand{\xLower}{-4}
+\newcommand{\xUpper}{4}
+\newcommand{\nx}{100}
+\newcommand{\vLower}{-4}
+\newcommand{\vUpper}{4}
+\newcommand{\nv}{100}
+\newcommand{\simM}{100}
+\newcommand{\timeParam}{
+\begin{tabular}{@{}*{6}{c}@{}}
+$t_0$ & $T$ & time step $\Delta^{\text{euler ref}}$ & time step $\Delta^{\text{euler}}$ & time step $\Delta^{\text{magnus}}$ & simulations $M$ \\
+$0$ & $\tUpper$ & $\dtEulerRef$ & $\dtEuler$ & $\dtMagnus$ & $\simM$ \\
+\end{tabular}
+}
+\newcommand{\positionParam}{
+\begin{tabular}{@{}*{3}{c}@{}}
+lower bound $a_x$ & upper bound $b_x$ & number of points $n_x$ \\
+$\xLower$ & $\xUpper$ & $\nx$ \\
+\end{tabular}
+}
+\newcommand{\velocityParam}{
+\begin{tabular}{@{}*{3}{c}@{}}
+lower bound $a_v$ & upper bound $b_v$ & number of points $n_v$ \\
+$\vLower$ & $\vUpper$ & $\nv$ \\
+\end{tabular}
+}
