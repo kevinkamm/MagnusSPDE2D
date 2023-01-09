@@ -11,11 +11,10 @@ end
 delete(gcp('nocreate'));parpool('threads'); % multithreading
 %% Select methods
 % choose methods to be computed
-useEulerRef = false;
-useEuler = true;
-useMilstein = true;
-useMagnus1 = false;
-useMagnus2 = false;
+useEulerRef = true;
+useEuler = false;
+useMagnus1 = true;
+useMagnus2 = true;
 useMagnus3 = true;
 useExact = true; %only use for constant coefficient case with set initial datum
 useExactApprox = false;%only use for constant coefficient case
@@ -29,13 +28,13 @@ errorDisType='rel1';
 % constant coefficient case with exact solution
 a=1.1/10*10;
 sigma=1/10*sqrt(10);
-[h,fx,fv,gxx,gxv,gvv,sx,sv,phi,hasExact,methodName]=...
-    selectCoefficients('exact1',[a,sigma]);
 % [h,fx,fv,gxx,gxv,gvv,sx,sv,phi,hasExact,methodName]=...
-%     selectCoefficients('Langevin1',[a,sigma]);
+%     selectCoefficients('exact1',[a,sigma]);
+[h,fx,fv,gxx,gxv,gvv,sx,sv,phi,hasExact,methodName]=...
+    selectCoefficients('Langevin1',[a,sigma]);
 %% Video & Plot parameters
 makeErrorGif=false;
-makePlots=false;
+makePlots=true;
 dirAbsErrorGif=['Results/Videos/',methodName,'/','AbsErrors'];
 dirErrorDisGif=['Results/Videos/',methodName,'/','ErrorDis'];
 backgroundColor = 'w';
@@ -44,29 +43,27 @@ textColor = 'k';
 % textColor = [237,237,237]./255;
 %%
 % Time
-T=1;
-% T=.1;
+% T=1;
+T=.1;
 % T=1;
 % for nx=100, exact1
 % dT=.1;
 % for nx=200, exact1
 % dT=.05;
 % for nx=300, exact1
-dT=.025;
+% dT=.025;
 % for nx=400, exact1
 % dT=.01;
 % for nx=200, Langevin1
-% dT=.025;
+dT=.025;
 % for nx=300, Langevin1
 % dT=.01;
 
 dtEulerRef=1e-4;
-dtEuler=1e-4;
-dtMilstein=1e-4;
+dtEuler=1e-3;
 dtMagnus=1e-3;
 NeulerRef = ceil(dT/dtEulerRef)+1;
 Neuler = ceil(dT/dtEuler)+1;
-Nmilstein = ceil(dT/dtMilstein)+1;
 Nmagnus= ceil(dT/dtMagnus)+1;
 
 % Simulations
@@ -75,7 +72,7 @@ M = 100;
 % Position
 xl=-4;
 xu=4;
-nx=300;
+nx=100;
 xgrid=linspace(xl,xu,nx+2)'; %nx+2 x 1
 % Velocity
 nv=nx;
@@ -106,48 +103,40 @@ patterns=sparsityPattern(A,B,10000, ...
 %% 
 phiEulerRef=repmat(Phi,1,1,1,M);
 phiEuler=repmat(Phi,1,1,1,M);
-phiMilstein=repmat(Phi,1,1,1,M);
 phiMagnus1=repmat(Phi(:),1,M);
 phiMagnus2=repmat(Phi(:),1,M);
 phiMagnus3=repmat(Phi(:),1,M);
 ctimeEulerRefTotal=0;
 ctimeEulerTotal=0;
-ctimeMilsteinTotal=0;
 ctimeMagnus1Total=0;
 ctimeMagnus2Total=0;
 ctimeMagnus3Total=0;
 ctimeExactTotal=0;
 errDisExactEulerRef={};
 errDisExactEuler={};
-errDisExactMilstein={};
 errDisExactMagnus1={};
 errDisExactMagnus2={};
 errDisExactMagnus3={};
 errAbsExactEulerRef={};
 errAbsExactEuler={};
-errAbsExactMilstein={};
 errAbsExactMagnus1={};
 errAbsExactMagnus2={};
 errAbsExactMagnus3={};
 errAbsAvgExactEulerRef={};
 errAbsAvgExactEuler={};
-errAbsAvgExactMilstein={};
 errAbsAvgExactMagnus1={};
 errAbsAvgExactMagnus2={};
 errAbsAvgExactMagnus3={};
 
 errDisEulerRefEuler={};
-errDisEulerRefMilstein={};
 errDisEulerRefMagnus1={};
 errDisEulerRefMagnus2={};
 errDisEulerRefMagnus3={};
 errAbsEulerRefEuler={};
-errAbsEulerRefMilstein={};
 errAbsEulerRefMagnus1={};
 errAbsEulerRefMagnus2={};
 errAbsEulerRefMagnus3={};
 errAbsAvgEulerRefEuler={};
-errAbsAvgEulerRefMilstein={};
 errAbsAvgEulerRefMagnus1={};
 errAbsAvgEulerRefMagnus2={};
 errAbsAvgEulerRefMagnus3={};
@@ -155,28 +144,22 @@ errAbsAvgEulerRefMagnus3={};
 kk=1;
 dWeulerRefCell=cell(floor(T/dT),1);
 dWeulerCell=cell(floor(T/dT),1);
-dWmilsteinCell=cell(floor(T/dT),1);
 WmagnusCell=cell(floor(T/dT),1);
 WexactCell=cell(floor(T/dT),1);
 tiERMCell=cell(floor(T/dT),1);
 tiERECell=cell(floor(T/dT),1);
-tiERMilCell=cell(floor(T/dT),1);
 tiEMCell=cell(floor(T/dT),1);
-tiMilMCell=cell(floor(T/dT),1);
 disp('Generate Brownian motion')
 ticBM=tic;
 for tk=dT:dT:T
-[dWeulerRef,dWeuler,dWmilstein,WeulerRef,Wmagnus,tiERM,tiERE,tiERMil,tiMilM,tiEM]=brownianMotion(dT,NeulerRef,Neuler,Nmilstein,Nmagnus,M);
+[dWeulerRef,dWeuler,WeulerRef,Wmagnus,tiERM,tiERE,tiEM]=brownianMotion(dT,NeulerRef,Neuler,Nmagnus,M);
 dWeulerRefCell{kk}=dWeulerRef;
 dWeulerCell{kk}=dWeuler;
-dWmilsteinCell{kk}=dWmilstein;
 WmagnusCell{kk}=Wmagnus;
 WexactCell{kk}=WeulerRef;
 tiERMCell{kk}=tiERM;
 tiERECell{kk}=tiERE;
-tiERMilCell{kk}=tiERMil;
 tiEMCell{kk}=tiEM;
-tiMilMCell{kk}=tiMilM;
 kk=kk+1;
 end
 ctimeBM=toc(ticBM);
@@ -187,12 +170,10 @@ for tk=dT:dT:T
 disp('Select Brownian motion')
 dWeulerRef=dWeulerRefCell{kk};
 dWeuler=dWeulerCell{kk};
-dWmilstein=dWmilsteinCell{kk};
 Wmagnus=WmagnusCell{kk};
 tiERM=tiERMCell{kk};
 tiERE=tiERECell{kk};
 tiEM=tiEMCell{kk};
-tiMilM=tiMilMCell{kk};
 
 %% Time storage
 %     tnMagnus=1:1:Nmagnus;
@@ -200,7 +181,6 @@ tiMilM=tiMilMCell{kk};
 tnMagnus=Nmagnus;
 tnEulerRef=tiERM(tnMagnus);
 tnEuler=tiEM(tnMagnus);
-tnMilstein=tiMilM(tnMagnus);
 %% Calculate reference Euler-Maruyama
 if useEulerRef
     tEulerRef=linspace(0,dT,NeulerRef);
@@ -232,21 +212,6 @@ if useEuler
     if any(isnan(utEuler),'all') || any(utEuler(floor(nx/2),floor(nv/2),:,:)>1e10,'all')
     %     error('Diverging euler scheme')
         disp('Diverging euler scheme')
-    end
-end
-%% Calculate Milstein
-if useMilstein
-    tMilstein=linspace(0,dT,Nmilstein);
-    disp('Compute Milstein')
-    ticMilstein=tic;
-    utMilstein=milsteinConst(tnMilstein,dT,Nmilstein,dWmilstein,Dx,Dv,Dxx,Dvv,H,Fx,Fv,Gxx,Gxv,Gvv,Sx,Sv,phiMilstein,'device','cpu','mode','full');
-    ctimeMilstein=toc(ticMilstein);
-    ctimeMilsteinTotal=ctimeMilsteinTotal+ctimeMilstein;
-    fprintf('Elapsed time for Milstein is %3.3g seconds.\n',ctimeMilstein)
-    phiMilstein=utMilstein(:,:,end,:);
-    % Check if Euler scheme is diverging
-    if any(isnan(utMilstein),'all') || any(utMilstein(floor(nx/2),floor(nv/2),:,:)>1e10,'all')
-        disp('Diverging milstein scheme')
     end
 end
 %% Calculate Magnus
@@ -360,23 +325,6 @@ if useExact && hasExact
             end
         end
     end
-    if useMilstein
-        [errAbsExactMilstein{kk},errAbsAvgExactMilstein{kk}]=...
-            absError(utExact,utMilstein,kappas);
-        fprintf('\t Mean abs error Exact and Milstein at time %1.3g at center: %1.3e\n',...
-                    tk,errAbsExactMilstein{kk}(d,d));
-        [errDisExactMilstein{kk},xExactMilstein{kk},fExactMilstein{kk},...
-            nBlowupsExactMilstein{kk}]= ...
-            errorDis(utExact,utMilstein,kappas,...
-                    'blowup',blowup,...
-                    'normType',errorDisType);
-        for iKappa=1:1:length(kappas)
-            if nBlowupsExactMilstein{kk}{iKappa}>-1
-                fprintf('\t\t Number of blowups for Milstein with kappa=%d: %d\n',...
-                        kappas(iKappa),nBlowupsExactMilstein{kk}{iKappa})
-            end
-        end
-    end
     if useMagnus1
         [errAbsExactMagnus1{kk},errAbsAvgExactMagnus1{kk}]=...
             absError(utExact,utMagnus1,kappas);
@@ -448,23 +396,6 @@ if useEulerRef
             end
         end
     end
-    if useMilstein
-        [errAbsEulerRefMilstein{kk},errAbsAvgEulerRefMilstein{kk}]=...
-            absError(utEulerRef,utMilstein,kappas);
-        fprintf('\t Mean abs error Euler Ref and Milstein at time %1.3g at center: %1.3e\n',...
-                        tk,errAbsEulerRefMilstein{kk}(d,d));
-        [errDisEulerRefMilstein{kk},xEulerRefMilstein{kk},fEulerRefMilstein{kk},...
-            nBlowupsEulerRefMilstein{kk}]= ...
-            errorDis(utEulerRef,utMilstein,kappas,...
-                    'blowup',blowup,...
-                    'normType',errorDisType);
-        for iKappa=1:1:length(kappas)
-            if nBlowupsEulerRefMilstein{kk}{iKappa}>-1
-                fprintf('\t\t Number of blowups for Milstein with kappa=%d: %d\n',...
-                        kappas(iKappa),nBlowupsEulerRefMilstein{kk}{iKappa})
-            end
-        end
-    end
     if useMagnus1
         [errAbsEulerRefMagnus1{kk},errAbsAvgEulerRefMagnus1{kk}]=...
             absError(utEulerRef,utMagnus1,kappas);
@@ -520,13 +451,12 @@ end
 kk=kk+1;
 end
 %% FileName
-fileName=sprintf('%s_T%1.3f_d%d_NER%d_NE_%d_NM_%d_M%d_%d%d%d%d%d%d%d',...
+fileName=sprintf('%s_T%1.3f_d%d_NER%d_NE_%d_NM_%d_M%d_%d%d%d%d%d%d',...
     methodName,T,nx,NeulerRef,Neuler,floor(T/dT)+1,M,...
-    hasExact,useEulerRef,useEuler,useMilstein,useMagnus1,useMagnus2,useMagnus3);
+    hasExact,useEulerRef,useEuler,useMagnus1,useMagnus2,useMagnus3);
 %% Total computational times
 fprintf('Total Elapsed time for Euler ref is %3.3g seconds.\n',ctimeEulerRefTotal)
 fprintf('Total Elapsed time for Euler is %3.3g seconds.\n',ctimeEulerTotal)
-fprintf('Total Elapsed time for Milstein is %3.3g seconds.\n',ctimeMilsteinTotal)
 fprintf('Total Elapsed time for Magnus order 1 is %3.3g seconds.\n',ctimeMagnus1Total)
 fprintf('Total Elapsed time for Magnus order 2 is %3.3g seconds.\n',ctimeMagnus2Total)
 fprintf('Total Elapsed time for Magnus order 3 is %3.3g seconds.\n',ctimeMagnus3Total)

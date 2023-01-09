@@ -1,4 +1,4 @@
-function [dWeulerRef,dWeuler,dWmilstein,WeulerRef,Wmagnus,tiERM,tiERE,tiERMil,tiMilM,tiEM]=brownianMotion(T,NeulerRef,Neuler,Nmilstein,Nmagnus,M)
+function [dWeulerRef,dWeuler,WeulerRef,Wmagnus,tiERM,tiERE,tiEM]=brownianMotion(T,NeulerRef,Neuler,Nmagnus,M)
 %%BROWNIANMOTION computes the Brownian motion with different time steps for
 % Euler and Magnus
 %   Input:
@@ -26,25 +26,11 @@ function [dWeulerRef,dWeuler,dWmilstein,WeulerRef,Wmagnus,tiERM,tiERE,tiERMil,ti
         tiERE=[];
     end
 
-    if ~isempty(Nmilstein)
-        tiERMil=1:1:Nmilstein;
-        tiERMil(2:1:end)=tiERMil(1:1:end-1).*floor((NeulerRef-1)/(Nmilstein-1))+1;
-    else
-        tiERMil=[];
-    end
-
     if ~isempty(Nmagnus) && ~isempty(Neuler)
         tiEM=1:1:Nmagnus;
         tiEM(2:1:end)=tiEM(1:1:end-1).*floor((Neuler-1)/(Nmagnus-1))+1;
     else
         tiEM=[];
-    end
-
-    if ~isempty(Nmagnus) && ~isempty(Nmilstein)
-        tiMilM=1:1:Nmagnus;
-        tiMilM(2:1:end)=tiMilM(1:1:end-1).*floor((Nmilstein-1)/(Nmagnus-1))+1;
-    else
-        tiMilM=[];
     end
     
     N=randn(1,1,NeulerRef-1,M);
@@ -61,13 +47,6 @@ function [dWeulerRef,dWeuler,dWmilstein,WeulerRef,Wmagnus,tiERM,tiERE,tiERMil,ti
     else
         dWeuler=[];
     end
-
-    if ~isempty(Nmilstein)
-        dWmilstein=diff(WeulerRef(1,1,tiERMil,:),1,3);
-    else
-        dWmilstein=[];
-    end
-
 %     dWmagnus=diff(WeulerRef(1,1,tiERM,:),1,3);
     if ~isempty(Nmagnus)
         Wmagnus=WeulerRef(1,1,tiERM,:);
